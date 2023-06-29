@@ -1,26 +1,36 @@
 package com.api.api_weather.controller;
 
 import com.api.api_weather.responses.WeatherResponse;
-import org.springframework.beans.factory.annotation.Value;
+import com.api.api_weather.service.WeatherService;
+import lombok.extern.log4j.Log4j2;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
-import org.springframework.web.client.RestTemplate;
 
 @RestController
 @RequestMapping("/api")
+@Log4j2
 public class WeatherController {
 
-    @Value("${openweather.api.key}")
-    private String API_KEY;
+    private final WeatherService weatherService;
+
+    public WeatherController(WeatherService weatherService) {
+        this.weatherService = weatherService;
+    }
 
     @RequestMapping("/weather")
     public ResponseEntity<WeatherResponse> getWeather(@RequestParam("location") String location) {
-        String apiUrl = "https://api.openweathermap.org/data/2.5/weather?q={location}&appid={apiKey}";
-        var restTemplate = new RestTemplate();
-        String url = apiUrl.replace("{location}", location).replace("{apiKey}", API_KEY);
-        return restTemplate.getForEntity(url, WeatherResponse.class);
+        try {
+            var weatherResponse = weatherService.getWeather(location);
+            if (weatherResponse == null) {
+                return ResponseEntity.notFound().build();
+            }
+            return ResponseEntity.ok(weatherResponse);
+        } catch (Exception e) {
+            log.error(e.getMessage());
+            return ResponseEntity.badRequest().build();
+        }
     }
 }
 
