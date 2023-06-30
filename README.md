@@ -12,7 +12,7 @@ You are tasked with developing a simple weather forecast API using Java and the 
 4. Handle any errors or invalid requests gracefully and return appropriate error messages or status codes.
 5. Write unit tests to ensure the functionality of your API endpoint(s).
 6. Implement basic logging to record API requests and responses.
-7. 
+
 ### Extra Credit (Optional):
 
 1. Implement caching to store previously fetched weather data for a certain period, reducing the number of requests to the weather API provider.
