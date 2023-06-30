@@ -1,11 +1,14 @@
 package com.api.api_weather.service;
 
+import com.api.api_weather.exceptions.WeatherServiceException;
 import com.api.api_weather.responses.OpenWeatherApiResponse;
 import com.api.api_weather.responses.WeatherResponse;
 import lombok.extern.log4j.Log4j2;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
+
+import java.util.function.ToDoubleBiFunction;
 
 @Service
 @Log4j2
@@ -40,12 +43,13 @@ public class WeatherService {
                 weatherResponse.setWeatherConditions(body.getWeather().get(0));
 
                 return weatherResponse;
+
+            } else {
+                throw new WeatherServiceException("Error getting weather data from OpenWeather API");
             }
         } catch (Exception e) {
             log.error(e.getMessage());
+            throw new WeatherServiceException("Error getting weather data from OpenWeather API");
         }
-
-        return null;
     }
-
 }
