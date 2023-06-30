@@ -8,8 +8,6 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
 
-import java.util.function.ToDoubleBiFunction;
-
 @Service
 @Log4j2
 public class WeatherService {
@@ -33,16 +31,15 @@ public class WeatherService {
             var response = restTemplate.getForEntity(url, OpenWeatherApiResponse.class);
 
             if (response.getStatusCode().is2xxSuccessful()) {
-                var weatherResponse = new WeatherResponse();
                 var body = response.getBody();
 
-                weatherResponse.setLocation(location);
-                weatherResponse.setTemperature(body.getMain().getTemp());
-                weatherResponse.setHumidity(body.getMain().getHumidity());
-                weatherResponse.setWindSpeed(body.getWind().getSpeed());
-                weatherResponse.setWeatherConditions(body.getWeather().get(0));
-
-                return weatherResponse;
+                return WeatherResponse.builder()
+                        .location(location)
+                        .temperature(body.getMain().getTemp())
+                        .humidity(body.getMain().getHumidity())
+                        .windSpeed(body.getWind().getSpeed())
+                        .weatherConditions(body.getWeather().get(0))
+                        .build();
 
             } else {
                 throw new WeatherServiceException("Error getting weather data from OpenWeather API");
